@@ -1,0 +1,56 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'gradle-one-jar'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+mainClassName = 'uk.co.zerogravit.server.dropwizard.SimpleServerApplication'
+
+buildscript {
+    repositories { mavenCentral() }
+    dependencies {
+        classpath 'com.github.rholder:gradle-one-jar:1.0.4'
+    }
+}
+
+version = '1.0'
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Counters Buffering', 'Implementation-Version': version
+    }
+}
+
+
+repositories { mavenCentral() }
+
+dependencies {
+    compile 'com.google.guava:guava:18.0'
+    compile 'org.mongodb:mongo-java-driver:2.+'
+    //	compile 'net.vz.mongodb.jackson:mongo-jackson-mapper:1.4.2'
+    compile 'org.mongodb.morphia:morphia:0.109'
+    compile 'io.dropwizard:dropwizard-core:0.7.1'
+
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+    testCompile 'org.hamcrest:hamcrest-all:1.+'
+    testCompile 'org.mockito:mockito-all:1.+'
+
+}
+
+test { systemProperties 'property': 'value' }
+
+
+
+task oneJar(type: OneJar) {
+    mainClass = mainClassName
+    archiveName = 'simpleServer.jar'
+    mergeManifestFromJar = true
+}
+
+run { args 'server', './src/main/resources/config/simpleserver.yml' }
+
+artifacts { oneJar }
